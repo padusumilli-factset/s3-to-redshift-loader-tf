@@ -24,6 +24,7 @@ locals {
   lambda_root    = "lambda-s3-copy"
   function_name  = "s3_to_s3_copy"
   lambda_runtime = "python3.9"
+  copy_job_queue = "s3-copy-queue.fifo"
 }
 
 ## S3 buckets
@@ -47,7 +48,7 @@ resource "aws_s3_bucket" "aci_resources_bucket" {
 
 ## SQS
 resource "aws_sqs_queue" "s3_to_s3_copy" {
-  name                        = "s3-copy-queue.fifo"
+  name                        = local.copy_job_queue
   fifo_queue                  = true
   content_based_deduplication = true
   # TODO Add DLQ
@@ -65,16 +66,9 @@ resource "aws_sqs_queue" "s3_to_s3_copy" {
   }
 }
 
-resource "aws_sns_topic_subscription" "loader_sns_topic_subscription" {
-  provider  = aws.sns2sqs
-  topic_arn = var.fds_sns_arn
-  protocol  = "sqs"
-  endpoint  = aws_sqs_queue.s3_to_s3_copy.arn
-}
-
-
 # Event source from SQS
 resource "aws_lambda_event_source_mapping" "event_source_mapping" {
+  provider         = aws
   event_source_arn = aws_sqs_queue.s3_to_s3_copy.arn
   enabled          = true
   function_name    = aws_lambda_function.s3_to_s3_copy.arn
@@ -82,4 +76,11 @@ resource "aws_lambda_event_source_mapping" "event_source_mapping" {
   depends_on       = [
     aws_lambda_function.s3_to_s3_copy
   ]
+}
+
+resource "aws_sns_topic_subscription" "loader_sns_topic_subscription" {
+  provider  = aws.sns2sqs
+  topic_arn = var.fds_sns_arn
+  protocol  = "sqs"
+  endpoint  = aws_sqs_queue.s3_to_s3_copy.arn
 }

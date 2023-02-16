@@ -47,9 +47,7 @@ variable "redshift_subnet_group_name" {
   default = "redshift-subnet-analytics"
 }
 
-variable "vpc_cidr" {}
-
-### S3
+Ha### S3
 variable "data_bucket_name" {
   description = "Bucket in which the data will be stored."
 }
@@ -95,12 +93,6 @@ variable "rs_node_type" {}
 variable "rs_cluster_type" {
   description = "number of nodes"
 }
-
-
-
-variable "redshift_subnet_cidr_1" {}
-
-variable "redshift_subnet_cidr_2" {}
 
 ## Lambda configuration
 

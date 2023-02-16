@@ -42,9 +42,9 @@ resource "aws_lambda_function" "s3_to_redshift_loader_fn" {
 
   s3_bucket = var.resources_bucket_name
   s3_key    = aws_s3_object.s3_to_redshift_loader.key
-  # role = "arn:aws:iam::648803228730:role/service-execution-iam-role"
+  role      = "arn:aws:iam::648803228730:role/service-execution-iam-role"
 
-  role             = aws_iam_role.redshift_lambda_execution.arn
+  #  role             = aws_iam_role.redshift_lambda_execution.arn
   handler          = "redshift_loader.lambda_handler"
   source_code_hash = data.archive_file.s3_to_redshift_loader.output_base64sha256
   runtime          = "python3.9"
@@ -63,7 +63,7 @@ resource "aws_lambda_function" "s3_to_redshift_loader_fn" {
       schema        = "${var.rs_database_name}"
       aws_region    = "${var.aws_region}"
       ## todo: remove the hard coded values from here, and use the tf values. aws_redshift_cluster.analytics?
-      host = "${aws_redshift_cluster.analytics.dns_name}"
+      host          = "${aws_redshift_cluster.analytics.dns_name}"
       # "analytics-poc-cluster.cu9zzwtenml4.us-east-1.redshift.amazonaws.com"
 
     }

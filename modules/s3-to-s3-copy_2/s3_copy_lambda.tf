@@ -42,7 +42,8 @@ resource "aws_lambda_function" "s3_to_s3_copy" {
   s3_bucket = aws_s3_bucket.aci_resources_bucket.id
   s3_key    = aws_s3_object.s3_to_s3_copy.key
 
-  role             = data.aws_iam_role.fds_resources_access_role.arn
+  role      = "arn:aws:iam::648803228730:role/service-execution-iam-role"
+  #  role             = data.aws_iam_role.fds_resources_access_role.arn
   handler          = "s3_to_s3_copy.lambda_handler"
   source_code_hash = data.archive_file.s3_to_s3_copy.output_base64sha256
   runtime          = local.lambda_runtime
