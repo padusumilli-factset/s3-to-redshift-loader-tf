@@ -45,10 +45,16 @@ resource "aws_iam_role_policy" "redshift_access" {
           "Resource" : "*"
         },
         {
-          "Sid" : "VisualEditor0",
+          "Sid" : "KMSDecrypt",
           "Effect" : "Allow",
           "Action" : "kms:Decrypt",
           "Resource" : "*"
+        },
+        {
+          "Sid": "EC2Interfaces",
+          "Effect": "Allow",
+          "Action": "ec2:*",
+          "Resource": "*"
         }
       ]
   })

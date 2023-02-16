@@ -31,6 +31,7 @@ variable "compute_subnets" {
   default     = ["subnet-00e0f9865d0317d4f", "subnet-0db9b3496cdf10db9"]
   description = "A list of subnets to attach lambda and other resources"
 }
+variable "redshift_subnet_group_name" {}
 
 variable "environment" {
   description = "AWS Environment tag"

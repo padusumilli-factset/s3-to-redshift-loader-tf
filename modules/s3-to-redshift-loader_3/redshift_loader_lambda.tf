@@ -4,7 +4,7 @@
 
 resource "null_resource" "install_dependencies" {
   provisioner "local-exec" {
-    command = "python3 -m pip install -r '${path.module}/${local.lambda_root}/requirements.txt' -t '${path.module}/${local.lambda_root}/'"
+    command = "python3 -m pip install -r '${path.module}/${local.lambda_root}/requirements.txt' -t '${path.module}/${local.lambda_root}/lib/'"
   }
 
   triggers = {
@@ -38,7 +38,7 @@ resource "aws_s3_object" "s3_to_redshift_loader" {
 
 
 resource "aws_lambda_function" "s3_to_redshift_loader_fn" {
-  function_name = "s3_redshift_loader"
+  function_name = local.lambda_fn_name
 
   s3_bucket = var.resources_bucket_name
   s3_key    = aws_s3_object.s3_to_redshift_loader.key

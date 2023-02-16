@@ -25,12 +25,12 @@ data "aws_vpc" "selected" {
 # }
 
 resource "aws_redshift_subnet_group" "analytics" {
-  name       = "redshift-subnet-group"
-  subnet_ids = ["subnet-00e0f9865d0317d4f", "subnet-0db9b3496cdf10db9"]
+  name       = var.redshift_subnet_group_name
+  subnet_ids = var.compute_subnets
 
   tags = {
-    environment = "dev"
-    Name        = "redshift-subnet-group"
+    environment = var.environment
+    Name        = var.redshift_subnet_group_name
   }
 }
 
@@ -56,7 +56,7 @@ resource "aws_redshift_cluster" "analytics" {
   database_name       = var.rs_database_name
   master_username     = var.rs_master_username
   master_password     = var.rs_master_pass
-  node_type           = var.rs_nodetype
+  node_type           = var.rs_node_type
   cluster_type        = var.rs_cluster_type
   skip_final_snapshot = true
   iam_roles           = ["${aws_iam_role.redshift_lambda_execution.arn}"]

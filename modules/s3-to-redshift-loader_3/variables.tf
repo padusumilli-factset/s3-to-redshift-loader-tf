@@ -31,15 +31,19 @@ variable "rs_master_username" {}
 
 variable "rs_master_pass" {}
 
-variable "rs_nodetype" {}
+variable "rs_node_type" {}
 
 variable "rs_cluster_type" {
   description = "number of nodes"
 }
 
-
 variable "vpc_id" {}
+
 variable "compute_subnets" {
   description = "list of subnets"
   default     = ["subnet-00e0f9865d0317d4f", "subnet-0db9b3496cdf10db9"]
 }
+
+variable "redshift_subnet_group_name" {}
+
+variable "environment" {}

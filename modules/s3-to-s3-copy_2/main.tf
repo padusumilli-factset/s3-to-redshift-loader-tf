@@ -2,8 +2,8 @@ terraform {
   required_version = "> 1.3"
   required_providers {
     aws = {
-      source  = "hashicorp/aws"
-      version = "~> 4.0"
+      source                = "hashicorp/aws"
+      version               = "~> 4.0"
       configuration_aliases = [aws.sns2sqs]
     }
   }
@@ -32,7 +32,7 @@ resource "aws_s3_bucket" "aci_data_bucket" {
 
   tags = {
     Name        = "Data bucket"
-    Environment = "${var.environment}"
+    Environment = var.environment
   }
 }
 
@@ -41,7 +41,7 @@ resource "aws_s3_bucket" "aci_resources_bucket" {
 
   tags = {
     Name        = "Lambda and other resources bucket"
-    Environment = "${var.environment}"
+    Environment = var.environment
   }
 }
 
@@ -66,7 +66,7 @@ resource "aws_sqs_queue" "s3_to_s3_copy" {
 }
 
 resource "aws_sns_topic_subscription" "loader_sns_topic_subscription" {
-  provider = aws.sns2sqs
+  provider  = aws.sns2sqs
   topic_arn = var.fds_sns_arn
   protocol  = "sqs"
   endpoint  = aws_sqs_queue.s3_to_s3_copy.arn
@@ -79,7 +79,7 @@ resource "aws_lambda_event_source_mapping" "event_source_mapping" {
   enabled          = true
   function_name    = aws_lambda_function.s3_to_s3_copy.arn
   batch_size       = 1
-  depends_on = [
+  depends_on       = [
     aws_lambda_function.s3_to_s3_copy
   ]
 }

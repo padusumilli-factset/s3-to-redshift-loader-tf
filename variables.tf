@@ -16,7 +16,7 @@ variable "aws_profile" {
 variable "fds_resources_access_role" {
 
 }
-variable "fds_access_point_arn" {
+variable "fds_access_point_alias" {
   description = "FactSet S3 Access Point ARN to be provided by FactSet on account setup"
 }
 
@@ -37,10 +37,16 @@ variable "app_name" {
 ### Network
 
 variable "vpc_id" {}
+
 variable "compute_subnets" {
   description = "list of subnets"
   default     = ["subnet-00e0f9865d0317d4f", "subnet-0db9b3496cdf10db9"]
 }
+
+variable "redshift_subnet_group_name" {
+  default = "redshift-subnet-analytics"
+}
+
 variable "vpc_cidr" {}
 
 ### S3
@@ -84,7 +90,7 @@ variable "rs_master_username" {}
 
 variable "rs_master_pass" {}
 
-variable "rs_nodetype" {}
+variable "rs_node_type" {}
 
 variable "rs_cluster_type" {
   description = "number of nodes"

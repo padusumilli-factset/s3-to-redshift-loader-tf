@@ -4,7 +4,7 @@
 
 resource "null_resource" "install_dependencies" {
   provisioner "local-exec" {
-    command = "python3 -m pip install -r '${path.module}/${local.lambda_root}/requirements.txt' -t '${path.module}/${local.lambda_root}/lib'"
+    command = "python3 -m pip install -r '${path.module}/${local.lambda_root}/requirements.txt' -t '${path.module}/${local.lambda_root}/lib/'"
   }
 
   triggers = {
@@ -21,7 +21,7 @@ data "archive_file" "s3_to_s3_copy" {
   source_dir  = "${path.module}/${local.lambda_root}"
   output_path = "${path.module}/${local.lambda_root}.zip"
 
-  # depends_on = [null_resource.install_dependencies]
+  depends_on = [null_resource.install_dependencies]
 }
 
 
@@ -48,7 +48,7 @@ resource "aws_lambda_function" "s3_to_s3_copy" {
   runtime          = local.lambda_runtime
 
   vpc_config {
-    subnet_ids = var.compute_subnets
+    subnet_ids         = var.compute_subnets
     # TODO: ask David
     security_group_ids = ["sg-0ea2537368013586b"]
     # aws_security_groups.this.ids?
@@ -57,8 +57,8 @@ resource "aws_lambda_function" "s3_to_s3_copy" {
 
   environment {
     variables = {
-      src_bucket = "${var.fds_access_point_arn}"
-      dst_bucket = "${var.data_bucket_name}"
+      src_bucket = var.fds_access_point_arn
+      dst_bucket = var.data_bucket_name
     }
   }
 

@@ -8,7 +8,7 @@ terraform {
 # }
 
 resource "aws_iam_role" "fds_resources_access_role" {
-  name = var.fds_resources_access_role
+  name               = var.fds_resources_access_role
   assume_role_policy = jsonencode({
     "Version" : "2012-10-17",
     "Statement" : [
@@ -78,9 +78,15 @@ resource "aws_iam_role_policy" "fds_resources_access" {
           "logs:PutLogEvents"
         ],
         "Resource" : "*"
+      },
+      {
+        "Sid" : "EC2Interfaces",
+        "Effect" : "Allow",
+        "Action" : "ec2:*",
+        "Resource" : "*"
       }
     ]
-    }
+  }
   )
 }
 
