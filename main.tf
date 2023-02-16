@@ -40,7 +40,7 @@ module "s3_to_s3_copy" {
   compute_subnets            = var.compute_subnets
   redshift_subnet_group_name = var.redshift_subnet_group_name
   fds_resources_access_role  = var.fds_resources_access_role
-  fds_access_point_arn       = var.fds_access_point_arn
+  fds_access_point_alias       = var.fds_access_point_alias
   fds_sns_arn                = var.fds_sns_arn
   environment                = var.environment
   timeout                    = var.timeout

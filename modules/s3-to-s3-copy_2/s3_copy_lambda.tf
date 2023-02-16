@@ -57,10 +57,8 @@ resource "aws_lambda_function" "s3_to_s3_copy" {
 
   environment {
     variables = {
-      src_bucket = var.fds_access_point_arn
+      src_bucket = var.fds_access_point_alias
       dst_bucket = var.data_bucket_name
     }
   }
-
-
 }

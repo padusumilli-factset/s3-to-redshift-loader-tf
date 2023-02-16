@@ -17,7 +17,7 @@ variable "fds_resources_access_role" {
   description = "FactSet resources including SNS and S3 access point resources access role name, this will be generated in the first step"
 }
 
-variable "fds_access_point_arn" {
+variable "fds_access_point_alias" {
   description = "FactSet S3 Access Point ARN to be provided by FactSet on account setup"
 }
 
