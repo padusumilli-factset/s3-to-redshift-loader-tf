@@ -2,10 +2,10 @@ terraform {
   required_version = "> 1.3"
 }
 
-provider "aws" {
-  profile = var.aws_profile
-  region  = var.aws_region
-}
+# provider "aws" {
+#   profile = var.aws_profile
+#   region  = var.aws_region
+# }
 
 resource "aws_iam_role" "fds_resources_access_role" {
   name = var.fds_resources_access_role

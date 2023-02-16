@@ -1,15 +1,24 @@
 terraform {
   required_version = "> 1.3"
-}
-
-provider "aws" {
-  profile = "default"
-  region  = var.aws_region
-  alias   = "with_fds_access_role"
-  assume_role {
-    role_arn = var.fds_resources_access_role_arn
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 4.0"
+      configuration_aliases = [aws.sns2sqs]
+    }
   }
 }
+
+# provider "aws" {
+#   profile = var.aws_profile
+#   //use fds region for SNS, usually us-east-1
+#   region  = var.fds_aws_region
+#   alias   = "sns2sqs"
+#   assume_role {
+#     role_arn = var.fds_resources_access_role_arn
+#     # for cross region use sqs account and sns region
+#   }
+# }
 
 locals {
   lambda_root    = "lambda-s3-copy"
@@ -57,6 +66,7 @@ resource "aws_sqs_queue" "s3_to_s3_copy" {
 }
 
 resource "aws_sns_topic_subscription" "loader_sns_topic_subscription" {
+  provider = aws.sns2sqs
   topic_arn = var.fds_sns_arn
   protocol  = "sqs"
   endpoint  = aws_sqs_queue.s3_to_s3_copy.arn

@@ -2,10 +2,10 @@ terraform {
   required_version = "> 1.3"
 }
 
-provider "aws" {
-  profile = var.aws_profile
-  region  = var.aws_region
-}
+# provider "aws" {
+#   profile = var.aws_profile
+#   region  = var.aws_region
+# }
 
 locals {
   lambda_root = "lambda-redshift"

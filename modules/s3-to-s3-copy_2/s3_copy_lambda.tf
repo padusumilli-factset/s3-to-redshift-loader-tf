@@ -4,7 +4,7 @@
 
 resource "null_resource" "install_dependencies" {
   provisioner "local-exec" {
-    command = "python3 -m pip install -r '${path.module}/${local.lambda_root}/requirements.txt' -t '${path.module}/${local.lambda_root}/'"
+    command = "python3 -m pip install -r '${path.module}/${local.lambda_root}/requirements.txt' -t '${path.module}/${local.lambda_root}/lib'"
   }
 
   triggers = {
@@ -21,7 +21,7 @@ data "archive_file" "s3_to_s3_copy" {
   source_dir  = "${path.module}/${local.lambda_root}"
   output_path = "${path.module}/${local.lambda_root}.zip"
 
-  depends_on = [null_resource.install_dependencies]
+  # depends_on = [null_resource.install_dependencies]
 }
 
 
@@ -36,23 +36,13 @@ resource "aws_s3_object" "s3_to_s3_copy" {
   depends_on = [data.archive_file.s3_to_s3_copy]
 }
 
-data "aws_iam_role" "fds_access_role" {
-  name = var.fds_resources_access_role
-}
-
-data "aws_security_groups" "this" {
-  filter {
-    name   = "vpc-id"
-    values = [var.vpc_id]
-  }
-}
 resource "aws_lambda_function" "s3_to_s3_copy" {
   function_name = local.function_name
 
   s3_bucket = aws_s3_bucket.aci_resources_bucket.id
   s3_key    = aws_s3_object.s3_to_s3_copy.key
 
-  role             = data.aws_iam_role.fds_access_role
+  role             = data.aws_iam_role.fds_resources_access_role.arn
   handler          = "s3_to_s3_copy.lambda_handler"
   source_code_hash = data.archive_file.s3_to_s3_copy.output_base64sha256
   runtime          = local.lambda_runtime
