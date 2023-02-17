@@ -82,7 +82,13 @@ resource "aws_iam_role_policy" "fds_resources_access" {
       {
         "Sid" : "EC2Interfaces",
         "Effect" : "Allow",
-        "Action" : "ec2:*",
+        "Action" : [
+          "ec2:DescribeNetworkInterfaces",
+          "ec2:CreateNetworkInterface",
+          "ec2:DeleteNetworkInterface",
+          "ec2:DescribeInstances",
+          "ec2:AttachNetworkInterface"
+        ],
         "Resource" : "*"
       }
     ]

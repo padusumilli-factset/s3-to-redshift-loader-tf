@@ -1,7 +1,3 @@
-data "aws_vpc" "selected" {
-  id = var.vpc_id
-}
-
 # resource "aws_subnet" "redshift_subnet_1" {
 #   vpc_id                  = data.aws_vpc.selected.id
 #   cidr_block              = cidrsubnet(data.aws_vpc.selected.cidr_block, 4, 1)
@@ -49,8 +45,6 @@ resource "aws_default_security_group" "analytics" {
   }
 }
 
-
-
 resource "aws_redshift_cluster" "analytics" {
   cluster_identifier  = var.rs_cluster_identifier
   database_name       = var.rs_database_name
@@ -61,7 +55,6 @@ resource "aws_redshift_cluster" "analytics" {
   skip_final_snapshot = true
   iam_roles           = ["${aws_iam_role.redshift_lambda_execution.arn}"]
 
-
   cluster_subnet_group_name = aws_redshift_subnet_group.analytics.id
 
   depends_on = [
@@ -70,5 +63,3 @@ resource "aws_redshift_cluster" "analytics" {
     aws_redshift_subnet_group.analytics,
   ]
 }
-
-## create schema once the redshift cluster is created

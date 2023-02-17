@@ -46,6 +46,8 @@ module "s3_to_s3_copy" {
   timeout                    = var.timeout
   data_bucket_name           = var.data_bucket_name
   resources_bucket_name      = var.resources_bucket_name
+
+  depends_on = [module.fds_resources_role]
 }
 
 
@@ -67,5 +69,5 @@ module "redshift_loader" {
   redshift_subnet_group_name = var.redshift_subnet_group_name
   environment                = var.environment
 
-#  depends_on = [module.s3_to_s3_copy]
+  depends_on = [module.s3_to_s3_copy]
 }

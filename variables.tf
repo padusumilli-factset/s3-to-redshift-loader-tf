@@ -47,7 +47,7 @@ variable "redshift_subnet_group_name" {
   default = "redshift-subnet-analytics"
 }
 
-Ha### S3
+### S3
 variable "data_bucket_name" {
   description = "Bucket in which the data will be stored."
 }

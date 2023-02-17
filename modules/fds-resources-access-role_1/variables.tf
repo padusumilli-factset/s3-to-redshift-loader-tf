@@ -9,7 +9,7 @@ variable "aws_profile" {
 }
 
 variable "fds_resources_access_role" {
-  description = "A role to be permissioned for FactSet resources"
+  description = "A role to be permission for FactSet resources"
   default     = "fds_resources_access_role"
 }
 

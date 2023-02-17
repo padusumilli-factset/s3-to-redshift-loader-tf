@@ -1,5 +1,5 @@
 resource "aws_iam_role" "redshift_lambda_execution" {
-  name = "redshift_lambda_execution_role"
+  name               = "redshift_lambda_execution_role"
   assume_role_policy = jsonencode(
     {
       "Version" : "2012-10-17",
@@ -12,7 +12,7 @@ resource "aws_iam_role" "redshift_lambda_execution" {
           "Action" : "sts:AssumeRole"
         }
       ]
-  })
+    })
   tags = {
     tag-key = "redshift-lambda-execution"
   }
@@ -51,13 +51,19 @@ resource "aws_iam_role_policy" "redshift_access" {
           "Resource" : "*"
         },
         {
-          "Sid": "EC2Interfaces",
-          "Effect": "Allow",
-          "Action": "ec2:*",
-          "Resource": "*"
+          "Sid" : "EC2Interfaces",
+          "Effect" : "Allow",
+          "Action" : [
+            "ec2:DescribeNetworkInterfaces",
+            "ec2:CreateNetworkInterface",
+            "ec2:DeleteNetworkInterface",
+            "ec2:DescribeInstances",
+            "ec2:AttachNetworkInterface"
+          ],
+          "Resource" : "*"
         }
       ]
-  })
+    })
 }
 
 resource "aws_iam_role_policy_attachment" "lambda_redshift_loader_policy" {

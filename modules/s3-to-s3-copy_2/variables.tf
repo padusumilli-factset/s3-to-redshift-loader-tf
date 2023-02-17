@@ -56,5 +56,3 @@ variable "data_bucket_name" {
 variable "resources_bucket_name" {
   description = "Bucket in which the .zip and .jar files of source code will be placed"
 }
-
-
