@@ -1,6 +1,7 @@
 import json
-import boto3
 import os
+
+import boto3
 
 
 def lambda_handler(event, context):
@@ -8,31 +9,31 @@ def lambda_handler(event, context):
 
     # copy from s3 using the access point
     src_bucket = os.getenv("src_bucket")
-    #  "ffd-stg-amercent-385-cp38ffh58uxrajma475d9t14sc17guse1b-s3alias"
     dst_bucket = os.getenv("dst_bucket")
-    # 'fdss3-aci-data-bucket'
+    q_url = os.getenv("q_url")
     s3_key = _get_file_location(event)
-    # "pa-analytics-demo/PAP_EXTRACT_CHARACTERISTICS.txt"
 
     extra_args = {
         'RequestPayer': 'requester'
     }
 
     s3 = boto3.resource('s3')
+    sqs = boto3.resource('sqs')
+
     copy_source = {
         'Bucket': src_bucket,
         'Key': s3_key
     }
     try:
         s3.meta.client.copy(CopySource=copy_source, Bucket=dst_bucket, Key=s3_key, ExtraArgs=extra_args)
+        m_body = {
+            "src_path": f"{dst_bucket}/{s3_key}",
+            "file_name": s3_key
+        }
+        m_group_id = "folder_path"
+        sqs.meta.client.send_message(MessageBody=m_body, MessageGroupId=m_group_id, QueueUrl=q_url)
     except Exception as e:
         print(e)
-
-    # client = boto3.client('s3')
-
-    # result= client.list_objects(Bucket=src_bucket,RequestPayer='requester')
-    # for o in result['Contents']:
-    #     print(o['Key'])   
 
 
 def _get_file_location(event):

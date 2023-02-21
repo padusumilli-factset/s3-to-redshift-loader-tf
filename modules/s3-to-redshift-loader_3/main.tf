@@ -2,41 +2,29 @@ terraform {
   required_version = "> 1.3"
 }
 
-# provider "aws" {
-#   profile = var.aws_profile
-#   region  = var.aws_region
-# }
-
 locals {
-  lambda_root = "lambda-redshift"
+  lambda_root    = "lambda-redshift"
   lambda_fn_name = "s3_to_redshift_loader_1"
+  loader_q_name = "redshift-loader-queue.fifo"
 }
 
 resource "aws_sqs_queue" "s3_redshift_loader_q" {
-  name                        = "redshift-loader-queue.fifo"
+  name                        = local.loader_q_name
   fifo_queue                  = true
   content_based_deduplication = true
-  # TODO Add DLQ
-  #   redrive_policy = jsonencode({
-  #     deadLetterTargetArn = aws_sqs_queue.terraform_queue_deadletter.arn
-  #     maxReceiveCount     = 4
-  #   })
-  #   redrive_allow_policy = jsonencode({
-  #     redrivePermission = "byQueue",
-  #     sourceQueueArns   = [aws_sqs_queue.terraform_queue_deadletter.arn]
-  #   })
 
   tags = {
-    Name = "redshift-loader-job-queue"
+    Name = local.loader_q_name
   }
 }
+
 ## Event source from SQS
- resource "aws_lambda_event_source_mapping" "event_source_mapping" {
-   event_source_arn = aws_sqs_queue.s3_redshift_loader_q.arn
-   enabled          = true
-   function_name    = aws_lambda_function.s3_to_redshift_loader_fn.arn
-   batch_size       = 1
-   depends_on = [
-     aws_lambda_function.s3_to_redshift_loader_fn
-   ]
- }
+resource "aws_lambda_event_source_mapping" "event_source_mapping" {
+  event_source_arn = aws_sqs_queue.s3_redshift_loader_q.arn
+  enabled          = true
+  function_name    = aws_lambda_function.s3_to_redshift_loader_fn.arn
+  batch_size       = 1
+  depends_on       = [
+    aws_lambda_function.s3_to_redshift_loader_fn
+  ]
+}

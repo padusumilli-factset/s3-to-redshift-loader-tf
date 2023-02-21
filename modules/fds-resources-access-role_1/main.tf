@@ -2,11 +2,6 @@ terraform {
   required_version = "> 1.3"
 }
 
-# provider "aws" {
-#   profile = var.aws_profile
-#   region  = var.aws_region
-# }
-
 resource "aws_iam_role" "fds_resources_access_role" {
   name               = var.fds_resources_access_role
   assume_role_policy = jsonencode({
@@ -16,6 +11,14 @@ resource "aws_iam_role" "fds_resources_access_role" {
         "Effect" : "Allow",
         "Principal" : {
           "Service" : ["lambda.amazonaws.com", "sqs.amazonaws.com"]
+        },
+        "Action" : "sts:AssumeRole"
+      },
+      {
+        "Sid" : "",
+        "Effect" : "Allow",
+        "Principal" : {
+          "AWS" : data.aws_caller_identity.current.arn
         },
         "Action" : "sts:AssumeRole"
       }

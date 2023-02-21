@@ -53,7 +53,7 @@ resource "aws_redshift_cluster" "analytics" {
   node_type           = var.rs_node_type
   cluster_type        = var.rs_cluster_type
   skip_final_snapshot = true
-  iam_roles           = ["${aws_iam_role.redshift_lambda_execution.arn}"]
+  iam_roles           = [aws_iam_role.redshift_lambda_execution.arn]
 
   cluster_subnet_group_name = aws_redshift_subnet_group.analytics.id
 
