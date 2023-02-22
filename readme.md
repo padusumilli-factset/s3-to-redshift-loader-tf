@@ -16,7 +16,7 @@ In order to use FDS Terraform modules, a few pre-requisites need to be met:
 you will need to have `boto3` and python's `requests` libraries installed.
 
 
-* `TF_VAR_FDS_STACK_PREFIX` - this environment variable *must* be set as it is required by both modules. 
+* `TF_VAR_STACK_PREFIX` - this environment variable *must* be set as it is required by both modules. 
 This prefix can be associated with the current git branch from which you are deploying Terraform and enables deploying multiple branches 
 of the same stack to the same AWS account. In the case of the master branch, the prefix should be set to an empty string. 
 When deploying locally, this environment variable must be set manually in order for the modules to run.
