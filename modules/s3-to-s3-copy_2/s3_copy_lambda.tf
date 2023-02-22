@@ -1,5 +1,5 @@
 ####################################################################################################
-# Lambda Function (Loads data from S3 to Redshift)
+# Lambda Function (Loads data from source S3 Access Point to target S3)
 ####################################################################################################
 
 resource "null_resource" "install_dependencies" {
@@ -14,16 +14,14 @@ resource "null_resource" "install_dependencies" {
   }
 }
 
-
 data "archive_file" "s3_to_s3_copy" {
   type = "zip"
 
   source_dir  = "${path.module}/${local.lambda_root}"
   output_path = "${path.module}/${local.lambda_root}.zip"
 
-  depends_on = [null_resource.install_dependencies]
+#  depends_on = [null_resource.install_dependencies]
 }
-
 
 resource "aws_s3_object" "s3_to_s3_copy" {
   bucket = aws_s3_bucket.aci_resources_bucket.id
@@ -33,14 +31,16 @@ resource "aws_s3_object" "s3_to_s3_copy" {
 
   etag = filemd5(data.archive_file.s3_to_s3_copy.output_path)
 
-  depends_on = [data.archive_file.s3_to_s3_copy]
+  depends_on = [null_resource.install_dependencies, data.archive_file.s3_to_s3_copy]
 }
 
 resource "aws_lambda_function" "s3_to_s3_copy" {
   function_name = local.function_name
 
-  s3_bucket        = aws_s3_bucket.aci_resources_bucket.id
-  s3_key           = aws_s3_object.s3_to_s3_copy.key
+  s3_bucket = aws_s3_bucket.aci_resources_bucket.id
+  s3_key    = aws_s3_object.s3_to_s3_copy.key
+
+  #  role      = "arn:aws:iam::648803228730:role/service-execution-iam-role"
   role             = data.aws_iam_role.fds_resources_access_role.arn
   handler          = "s3_to_s3_copy.lambda_handler"
   source_code_hash = data.archive_file.s3_to_s3_copy.output_base64sha256
@@ -58,6 +58,7 @@ resource "aws_lambda_function" "s3_to_s3_copy" {
     variables = {
       src_bucket = var.fds_access_point_alias
       dst_bucket = var.data_bucket_name
+      q_url = aws_sqs_queue.s3_to_s3_copy.url
     }
   }
 }

@@ -6,7 +6,7 @@
 
 In order to use FDS Terraform modules, a few pre-requisites need to be met:
 
-* [Terraform](https://www.terraform.io/downloads.html) version `>= 0.12`
+* [Terraform](https://www.terraform.io/downloads.html) version `>= 0.13`
 
 
 * [Python 3](https://www.python.org/downloads/) must be installed on the system running terraform

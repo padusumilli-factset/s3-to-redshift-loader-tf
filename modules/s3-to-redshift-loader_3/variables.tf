@@ -41,7 +41,7 @@ variable "vpc_id" {}
 
 variable "compute_subnets" {
   description = "list of subnets"
-  default     = []
+  default     = ["subnet-00e0f9865d0317d4f", "subnet-0db9b3496cdf10db9"]
 }
 
 variable "redshift_subnet_group_name" {}
