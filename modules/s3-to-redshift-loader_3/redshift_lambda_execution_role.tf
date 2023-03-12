@@ -26,7 +26,12 @@ resource "aws_iam_role_policy" "redshift_access" {
     {
       "Version" : "2012-10-17",
       "Statement" : [
-
+        {
+          "Sid" : "KMSDecrypt",
+          "Effect" : "Allow",
+          "Action" : "kms:Decrypt",
+          "Resource" : "*"
+        },
         {
           "Sid" : "S3ObjectAccess",
           "Effect" : "Allow",
@@ -45,12 +50,6 @@ resource "aws_iam_role_policy" "redshift_access" {
           "Resource" : "*"
         },
         {
-          "Sid" : "KMSDecrypt",
-          "Effect" : "Allow",
-          "Action" : "kms:Decrypt",
-          "Resource" : "*"
-        },
-        {
           "Sid" : "EC2VPCAccess",
           "Effect" : "Allow",
           "Action" : [
@@ -66,18 +65,8 @@ resource "aws_iam_role_policy" "redshift_access" {
           "Resource" : "*"
         },
         {
-          "Sid": "",
-          "Effect": "Allow",
-          "Action": [
-            "logs:CreateLogGroup",
-            "logs:CreateLogStream",
-            "logs:PutLogEvents"
-          ],
-          "Resource": "*"
-        },
-        {
-          "Effect": "Allow",
-          "Action": [
+          "Effect" : "Allow",
+          "Action" : [
             "sqs:ReceiveMessage",
             "sqs:DeleteMessage",
             "sqs:GetQueueAttributes",
@@ -85,21 +74,8 @@ resource "aws_iam_role_policy" "redshift_access" {
             "logs:CreateLogStream",
             "logs:PutLogEvents"
           ],
-          "Resource": "*"
+          "Resource" : "*"
         }
-
       ]
     })
 }
-
-#resource "aws_iam_role_policy_attachment" "lambda_redshift_loader_policy" {
-#  role       = aws_iam_role.redshift_lambda_execution.name
-#
-#  for_each = toset([
-#    "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
-#    "arn:aws:iam::aws:policy/AmazonSQSFullAccess",
-#    "arn:aws:iam::aws:policy/service-role/AWSLambdaSQSQueueExecutionRole"
-##    "arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole"
-#  ])
-#  policy_arn = each.value
-#}

@@ -9,7 +9,7 @@ provider "aws" {
 
 provider "aws" {
   profile = var.aws_profile
-  //use fds region for SNS, usually us-east-1
+  // use fds region for SNS, usually us-east-1
   region  = var.fds_aws_region
   alias   = "sns2sqs"
   assume_role {
@@ -40,12 +40,13 @@ module "s3_to_s3_copy" {
   compute_subnets            = var.compute_subnets
   redshift_subnet_group_name = var.redshift_subnet_group_name
   fds_resources_access_role  = var.fds_resources_access_role
-  fds_access_point_alias       = var.fds_access_point_alias
+  fds_access_point_alias     = var.fds_access_point_alias
   fds_sns_arn                = var.fds_sns_arn
-  environment                = var.environment
-  timeout                    = var.timeout
-  data_bucket_name           = var.data_bucket_name
-  resources_bucket_name      = var.resources_bucket_name
+
+  environment           = var.environment
+  timeout               = var.timeout
+  data_bucket_name      = var.data_bucket_name
+  resources_bucket_name = var.resources_bucket_name
 
   depends_on = [module.fds_resources_role]
 }
@@ -64,10 +65,10 @@ module "redshift_loader" {
   rs_node_type          = var.rs_node_type
   rs_cluster_type       = var.rs_cluster_type
 
-  vpc_id                     = var.vpc_id
-  compute_subnets            = var.compute_subnets
-  redshift_subnet_group_name = var.redshift_subnet_group_name
-  environment                = var.environment
-
-  depends_on = [module.s3_to_s3_copy]
+  vpc_id                      = var.vpc_id
+  compute_subnets             = var.compute_subnets
+  redshift_subnet_group_name  = var.redshift_subnet_group_name
+  environment                 = var.environment
+  s3_to_s3_copy_updates_topic = var.s3_to_s3_copy_updates_topic
+  depends_on                  = [module.s3_to_s3_copy]
 }

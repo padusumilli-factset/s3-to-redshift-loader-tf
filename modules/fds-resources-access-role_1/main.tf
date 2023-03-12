@@ -15,7 +15,6 @@ resource "aws_iam_role" "fds_resources_access_role" {
         "Action" : "sts:AssumeRole"
       },
       {
-        "Sid" : "",
         "Effect" : "Allow",
         "Principal" : {
           "AWS" : data.aws_caller_identity.current.arn

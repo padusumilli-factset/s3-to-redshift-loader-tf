@@ -4,7 +4,7 @@ fds_aws_region = "us-east-1"
 
 aws_profile = "default"
 
-fds_resources_access_role = "client-access-test"
+fds_resources_access_role = "client-access"
 
 fds_access_point_alias = "ffd-stg-amercent-385-cp38ffh58uxrajma475d9t14sc17guse1b-s3alias"
 
@@ -31,3 +31,4 @@ rs_node_type = "dc2.large"
 
 rs_cluster_type = "multi-node"
 
+s3_to_s3_copy_updates_topic = "s3-to-s3-copy-updates-topic.fifo"

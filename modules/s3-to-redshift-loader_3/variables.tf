@@ -47,3 +47,7 @@ variable "compute_subnets" {
 variable "redshift_subnet_group_name" {}
 
 variable "environment" {}
+
+variable "s3_to_s3_copy_updates_topic" {
+  description = "FactSet S3 to local S3 bucket copy updates for downstream piepline processing, like loading in to RedShift"
+}

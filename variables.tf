@@ -16,6 +16,11 @@ variable "aws_profile" {
 variable "fds_resources_access_role" {
 
 }
+
+variable "s3_to_s3_copy_updates_topic" {
+  description = "FactSet S3 to local S3 bucket copy updates for downstream piepline processing, like loading in to RedShift"
+}
+
 variable "fds_access_point_alias" {
   description = "FactSet S3 Access Point ARN to be provided by FactSet on account setup"
 }

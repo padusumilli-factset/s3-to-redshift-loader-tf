@@ -1,25 +1,3 @@
-# resource "aws_subnet" "redshift_subnet_1" {
-#   vpc_id                  = data.aws_vpc.selected.id
-#   cidr_block              = cidrsubnet(data.aws_vpc.selected.cidr_block, 4, 1)
-#   availability_zone       = var.aws_availability_zone_1
-#   map_public_ip_on_launch = "true"
-
-#   tags = {
-#     Name = "redshift-subnet-1"
-#   }
-# }
-
-# resource "aws_subnet" "redshift_subnet_2" {
-#   vpc_id                  = data.aws_vpc.selected.id
-#   cidr_block              = cidrsubnet(data.aws_vpc.selected.cidr_block, 4, 1)
-#   availability_zone       = var.aws_availability_zone_2
-#   map_public_ip_on_launch = "true"
-
-#   tags = {
-#     Name = "redshift-subnet-2"
-#   }
-# }
-
 resource "aws_redshift_subnet_group" "analytics" {
   name       = var.redshift_subnet_group_name
   subnet_ids = var.compute_subnets
@@ -30,13 +8,22 @@ resource "aws_redshift_subnet_group" "analytics" {
   }
 }
 
-resource "aws_default_security_group" "analytics" {
+resource "aws_default_security_group" "redshift" {
   vpc_id = data.aws_vpc.selected.id
 
   ingress {
-    from_port   = 5439
-    to_port     = 5439
-    protocol    = "tcp"
+    description = "Limit traffic to Redshift port"
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    description = "Any traffic"
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
   }
 
@@ -54,12 +41,14 @@ resource "aws_redshift_cluster" "analytics" {
   cluster_type        = var.rs_cluster_type
   skip_final_snapshot = true
   iam_roles           = [aws_iam_role.redshift_lambda_execution.arn]
-
   cluster_subnet_group_name = aws_redshift_subnet_group.analytics.id
+
+  publicly_accessible = false
+  enhanced_vpc_routing = true
 
   depends_on = [
     aws_iam_role.redshift_lambda_execution,
-    aws_default_security_group.analytics,
+    aws_default_security_group.redshift,
     aws_redshift_subnet_group.analytics,
   ]
 }

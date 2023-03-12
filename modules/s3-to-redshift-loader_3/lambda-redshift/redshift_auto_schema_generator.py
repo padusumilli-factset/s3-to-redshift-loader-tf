@@ -3,10 +3,9 @@ from typing import List
 from typing import Tuple
 
 import pandas as pd
+import psycopg2 as pg
 from dateutil import parser
 from redshift_auto_schema import RedshiftAutoSchema
-
-import psycopg2 as pg
 
 
 class RedshiftAutoSchemaGenerator(RedshiftAutoSchema):
@@ -20,7 +19,7 @@ class RedshiftAutoSchemaGenerator(RedshiftAutoSchema):
                  dist_key: str = None,
                  sort_key: str = None,
                  delimiter: str = '|',
-                 quotechar: str = '"',
+                 quote_char: str = '"',
                  encoding: str = None,
                  conn: pg.extensions.connection = None,
                  default_group: str = 'dbreader',
@@ -37,7 +36,7 @@ class RedshiftAutoSchemaGenerator(RedshiftAutoSchema):
                          dist_key=dist_key,
                          sort_key=sort_key,
                          delimiter=delimiter,
-                         quotechar=quotechar,
+                         quotechar=quote_char,
                          encoding=encoding,
                          conn=conn,
                          default_group=default_group,
@@ -56,8 +55,10 @@ class RedshiftAutoSchemaGenerator(RedshiftAutoSchema):
         if 'parquet' in self.file.lower():
             self.file_df = pd.read_parquet(self.file)
         else:
-            self.file_df = pd.read_csv(self.file, sep=self.delimiter, quotechar=self.quotechar, encoding=self.encoding,
-                                       low_memory=low_memory)
+            chunks = pd.read_csv(self.file, sep=self.delimiter, quotechar=self.quotechar, encoding=self.encoding,
+                                 low_memory=low_memory, chunksize=10_000)
+            self.file_df = next(chunks)
+
         if self.column_name_sanitizers:
             self.file_df.columns = [self._replace_all(col) for col in self.file_df.columns]
 
@@ -84,17 +85,7 @@ class RedshiftAutoSchemaGenerator(RedshiftAutoSchema):
             else:
                 try:
                     column.astype(float)
-                    try:
-                        ## check with Matt Ross why some of these values are appended with zero's?
-                        # if np.array_equal(column.fillna(True).astype(float), column.fillna(True).astype(int)):
-                        #     if column.max() <= 2147483647 and column.min() >= -2147483648:
-                        #         return 'int4'
-                        #     else:
-                        #         return 'int8'
-                        # else:
-                        return 'float8'
-                    except TypeError:
-                        return 'float8'
+                    return 'float8'
                 except (TypeError, ValueError, OverflowError):
                     try:
                         date_parse = pd.to_datetime(column, infer_datetime_format=True)
